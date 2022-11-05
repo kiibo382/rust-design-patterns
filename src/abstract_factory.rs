@@ -1,17 +1,17 @@
-pub trait AbstractFactory {
+trait AbstractFactory {
     fn create_product_a(&self) -> Box<dyn ProductA>;
     fn create_product_b(&self) -> Box<dyn ProductB>;
 }
 
-pub trait ProductA {
+trait ProductA {
     fn useful_function_a(&self) -> &str;
 }
 
-pub trait ProductB {
+trait ProductB {
     fn useful_function_b(&self) -> &str;
 }
 
-pub struct ConcreteFactory1;
+struct ConcreteFactory1;
 impl AbstractFactory for ConcreteFactory1 {
     fn create_product_a(&self) -> Box<dyn ProductA> {
         Box::new(ConcreteProductA1::new())
@@ -28,7 +28,7 @@ impl ConcreteFactory1 {
     }
 }
 
-pub struct ConcreteProductA1 {
+struct ConcreteProductA1 {
     pub useful_function_a: String,
 }
 
@@ -46,7 +46,7 @@ impl ConcreteProductA1 {
     }
 }
 
-pub struct ConcreteProductB1 {
+struct ConcreteProductB1 {
     pub useful_function_b: String,
 }
 

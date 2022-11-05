@@ -1,15 +1,15 @@
-pub trait Builder {
+trait Builder {
     fn produce_part_a(&mut self);
     fn produce_part_b(&mut self);
     fn produce_part_c(&mut self);
     fn get_result(&self) -> Box<dyn Product>;
 }
 
-pub trait Product {
+trait Product {
     fn list_parts(&self) -> String;
 }
 
-pub struct Director {
+struct Director {
     builder: Box<dyn Builder>,
 }
 
@@ -30,7 +30,7 @@ impl Director {
 }
 
 #[derive(Clone)]
-pub struct ConcreteBuilder1 {
+struct ConcreteBuilder1 {
     product: Product1,
 }
 
@@ -65,7 +65,7 @@ impl Builder for ConcreteBuilder1 {
 }
 
 #[derive(Clone)]
-pub struct Product1 {
+struct Product1 {
     parts: Vec<String>,
 }
 
