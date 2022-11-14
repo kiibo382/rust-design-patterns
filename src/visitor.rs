@@ -1,36 +1,36 @@
 trait Visitor {
-    fn visit(&self, element: &dyn Element);
+    fn visit_a(&self, a: &ConcreteElementA);
+    fn visit_b(&self, b: &ConcreteElementB);
 }
 
 trait Element {
     fn accept(&self, visitor: &dyn Visitor);
 }
 
+#[derive(Debug)]
 struct ConcreteElementA;
 impl Element for ConcreteElementA {
     fn accept(&self, visitor: &dyn Visitor) {
-        visitor.visit(self);
+        visitor.visit_a(self);
     }
 }
 
+#[derive(Debug)]
 struct ConcreteElementB;
 impl Element for ConcreteElementB {
     fn accept(&self, visitor: &dyn Visitor) {
-        visitor.visit(self);
+        visitor.visit_b(self);
     }
 }
 
 struct ConcreteVisitor1;
 impl Visitor for ConcreteVisitor1 {
-    fn visit(&self, _element: &dyn Element) {
-        println!("ConcreteVisitor1");
+    fn visit_a(&self, a: &ConcreteElementA) {
+        println!("Visited {:?}.", a);
     }
-}
 
-struct ConcreteVisitor2;
-impl Visitor for ConcreteVisitor2 {
-    fn visit(&self, _element: &dyn Element) {
-        println!("ConcreteVisitor2");
+    fn visit_b(&self, b: &ConcreteElementB) {
+        println!("Visited {:?}.", b);
     }
 }
 
@@ -40,19 +40,10 @@ mod tests {
 
     #[test]
     fn test_visitor() {
-        let elements: Vec<Box<dyn Element>> = vec![
-            Box::new(ConcreteElementA),
-            Box::new(ConcreteElementB),
-        ];
-        let visitors: Vec<Box<dyn Visitor>> = vec![
-            Box::new(ConcreteVisitor1),
-            Box::new(ConcreteVisitor2),
-        ];
-
-        for element in elements {
-            for visitor in &visitors {
-                element.accept(visitor);
-            }
-        }
+        let visitor = ConcreteVisitor1;
+        let a = ConcreteElementA;
+        let b = ConcreteElementB;
+        a.accept(&visitor);
+        b.accept(&visitor);
     }
 }

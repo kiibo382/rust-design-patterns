@@ -3,4 +3,4 @@
 - Abstract factory
 - Builder
 - Visitor
-  - Visitor pattern's class diagram is here: [visitor.md](./docs/visitor.md)
+  - The class diagram of list_vistior.rs is here: [list_visitor.md](./docs/list_visitor.md)
