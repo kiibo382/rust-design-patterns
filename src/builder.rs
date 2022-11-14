@@ -91,7 +91,8 @@ mod tests {
 
     #[test]
     fn test_builder() {
-        let mut director = Director::new(Box::new(ConcreteBuilder1::new()));
+        let builder = ConcreteBuilder1::new();
+        let mut director = Director::new(Box::new(builder));
         director.build_minimal_viable_product();
         assert_eq!(director.builder.get_result().list_parts(), "PartA1");
     }

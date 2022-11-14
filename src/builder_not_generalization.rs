@@ -65,6 +65,8 @@ enum ProductType {
     Product2,
 }
 
+// -----------------------------------------------------------
+
 #[derive(Clone)]
 struct Product1 {
     parts: Vec<String>,
