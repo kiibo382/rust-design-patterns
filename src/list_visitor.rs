@@ -1,12 +1,13 @@
 use std::fmt;
 
-trait Visitor {
-    fn visit_file(&self, file: &File);
-    fn visit_directory(&mut self, directory: &Directory);
+trait Visitor<T> {
+    fn visit(&mut self, element: &T);
 }
 
 trait Element {
-    fn accept(&self, visitor: &mut dyn Visitor);
+    fn accept(&self, visitor: &mut dyn Visitor<Self>)
+    where
+        Self: Sized;
 }
 
 trait Entry: Element {
@@ -41,8 +42,8 @@ impl Entry for File {
 }
 
 impl Element for File {
-    fn accept(&self, visitor: &mut dyn Visitor) {
-        visitor.visit_file(self);
+    fn accept(&self, visitor: &mut dyn Visitor<Self>) {
+        visitor.visit(self);
     }
 }
 
@@ -72,20 +73,20 @@ impl Entry for Directory {
     }
 
     fn get_size(&self) -> usize {
-        self.directory
-            .iter()
-            .map(|entry| entry.get_size())
-            .sum()
+        self.directory.iter().map(|entry| entry.get_size()).sum()
     }
 
-    fn add(&mut self, entry: Box<dyn Entry>) {
+    fn add(&mut self, entry: Box<dyn Entry>)
+    where
+        Self: Sized,
+    {
         self.directory.push(entry);
     }
 }
 
 impl Element for Directory {
-    fn accept(&self, visitor: &mut dyn Visitor) {
-        visitor.visit_directory(self);
+    fn accept(&self, visitor: &mut dyn Visitor<Self>) {
+        visitor.visit(self);
     }
 }
 
@@ -107,16 +108,18 @@ impl ListVisitor {
     }
 }
 
-impl Visitor for ListVisitor {
-    fn visit_file(&self, file: &File) {
+impl Visitor<File> for ListVisitor {
+    fn visit(&mut self, file: &File) {
         println!("{}{}", self.current_dir, file);
     }
+}
 
-    fn visit_directory(&mut self, directory: &Directory) {
+impl Visitor<Directory> for ListVisitor {
+    fn visit(&mut self, directory: &Directory) {
         println!("{}{}", self.current_dir, directory);
         let saved_dir = self.current_dir.clone();
-        self.current_dir.push_str(&directory.get_name());
-        self.current_dir.push_str("/");
+        self.current_dir
+            .push_str(&format!("{}/", directory.get_name()));
         for entry in &directory.directory {
             entry.accept(self);
         }
@@ -129,7 +132,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_list_visitor() {
+    fn test_visitor() {
         let mut root_dir = Directory::new(String::from("root"));
         root_dir.add(Box::new(File::new(String::from("diary.html"), 100)));
         root_dir.add(Box::new(File::new(String::from("index.html"), 200)));
